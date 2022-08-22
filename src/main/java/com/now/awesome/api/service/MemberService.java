@@ -24,7 +24,7 @@ public class MemberService {
 
     private void validationDuplicateMember(Member member) {
         // 회원가입 중복체크
-        List<Member> findMembers = memberRepository.findByName(member.getUserId());
+        List<Member> findMembers = memberRepository.findByUserId(member.getUserId());
 
         if(!findMembers.isEmpty()){
             throw new IllegalStateException("이미 존재하는 회원 입니다.");
