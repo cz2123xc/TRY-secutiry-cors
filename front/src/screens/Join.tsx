@@ -1,5 +1,47 @@
 import React, { useState } from "react";
 import axios from "axios";
+import styled from "styled-components";
+
+
+const Title = styled.h1`
+        font-size: 36px;
+        margin-bottom: 40px;
+    `;
+
+const AllWrapper = styled.div`
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        padding: 40px 0;
+    `;
+
+const TitleTD = styled.td`
+        font-size: 18px;
+        font-weight: bold;
+        text-align: left;
+        padding: 10px;
+        width: 140px;
+    `;
+
+const InputBox = styled.input`
+        width: 200px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+        margin-bottom: 10px;
+    `;
+
+const SubmitButton = styled.button`
+        width: 200px;
+        height: 42px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+        margin-bottom: 10px;
+    `;
+
 
 function Join () {
 
@@ -36,16 +78,19 @@ function Join () {
         // id null check
         if(userId === "") {
             alert("아이디를 입력해주세요.");
+            return;
         }
 
         // pw null check
         if(userPw === "") {
             alert("비밀번호를 입력해주세요.");
+            return;
         }
 
         // pw check null check
         if (userPw !== userPwCheck) {
             alert("비밀번호가 일치하지 않습니다.");
+            return;
         }
 
         // name null check
@@ -63,45 +108,51 @@ function Join () {
             email
         }).then(res => {
             console.log(res);
+            alert("회원가입이 완료되었습니다.");
+            window.location.href = "/";
         }).catch(err => {
             console.log(err);
+            alert("회원가입에 실패하였습니다.");
         }).finally(() => {
-            console.log("완료");
+            console.log("회원가입 요청 완료");
         })
 
     }
 
+
+
+
     return (
-        <div>
-            <h1>Join</h1>
-            <form onSubmit={onSubmitHandler} method="post">
+        <AllWrapper>
+            <Title>회원가입</Title>
+            <form onSubmit={onSubmitHandler} method={"post"}>
                 <table>
                     <tbody>
                     <tr>
-                        <td>아이디</td>
-                        <td><input value={userId} id={'userId'} onChange={onUserIdHandler} type="text"/></td>
+                        <TitleTD>아이디</TitleTD>
+                        <td><InputBox value={userId} id={'userId'} onChange={onUserIdHandler} type="text"/></td>
                     </tr>
                     <tr>
-                        <td>비밀번호</td>
-                        <td><input value={userPw} id={'userPw'} onChange={onUserPwHandler} type="password"/></td>
+                        <TitleTD>비밀번호</TitleTD>
+                        <td><InputBox value={userPw} id={'userPw'} onChange={onUserPwHandler} type="password"/></td>
                     </tr>
                     <tr>
-                        <td>비밀번호 확인</td>
-                        <td><input value={userPwCheck} id={'userPwCheck'} onChange={onUserPwCheckHandler} type="password"/></td>
+                        <TitleTD>비밀번호 확인</TitleTD>
+                        <td><InputBox value={userPwCheck} id={'userPwCheck'} onChange={onUserPwCheckHandler} type="password"/></td>
                     </tr>
                     <tr>
-                        <td>이름</td>
-                        <td><input value={name} id={'name'} onChange={onNameHandler} type="text"/></td>
+                        <TitleTD>이름</TitleTD>
+                        <td><InputBox value={name} id={'name'} onChange={onNameHandler} type="text"/></td>
                     </tr>
                     <tr>
-                        <td>이메일</td>
-                        <td><input value={email} id={'email'} onChange={onEmailHandler} type="text"/></td>
+                        <TitleTD>이메일</TitleTD>
+                        <td><InputBox value={email} id={'email'} onChange={onEmailHandler} type="text"/></td>
                     </tr>
                     </tbody>
                 </table>
-                <button type="submit">회원가입</button>
+                <SubmitButton type="submit">회원가입</SubmitButton>
             </form>
-        </div>
+        </AllWrapper>
     );
 }
 

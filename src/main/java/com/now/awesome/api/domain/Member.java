@@ -28,4 +28,5 @@ public class Member {
 
     private String regDate;
 
+
 }
