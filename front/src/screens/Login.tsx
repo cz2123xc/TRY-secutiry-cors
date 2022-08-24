@@ -53,16 +53,14 @@ function Login() {
             return;
         }
 
-        axios.post("http://localhost:8080/login", {
+        axios.post("http://localhost:8080/api/login", {
             userId: userId,
             userPw: userPw
         }).then(res => {
-            console.log(res);
-            alert("로그인에 되었습니다.");
+            alert("로그인 되었습니다.");
             window.location.href = "/";
         }).catch(err => {
-            console.log(err);
-            alert("로그인에 실패했습니다.");
+            alert(err.response.data.message);
         }).finally(() => {
             console.log("로그인 요청 완료");
         })

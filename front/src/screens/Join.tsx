@@ -101,7 +101,7 @@ function Join () {
         }
 
         // use axios
-        axios.post("http://localhost:8080/join", {
+        axios.post("http://localhost:8080/api/join", {
             userId,
             userPw,
             name,
@@ -109,7 +109,7 @@ function Join () {
         }).then(res => {
             console.log(res);
             alert("회원가입이 완료되었습니다.");
-            window.location.href = "/";
+            // window.location.href = "/";
         }).catch(err => {
             console.log(err);
             alert("회원가입에 실패하였습니다.");

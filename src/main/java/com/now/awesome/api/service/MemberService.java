@@ -19,13 +19,16 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public Long join(Member member) {
+    private final PasswordEncoder passwordEncoder;
 
-        log.info("패스워드");
+    public Long join(Member member) {
 
         // 회원가입 중복체크
         validationDuplicateMember(member);
 
+        // 패스워드 암호화
+        String encodedPassword = passwordEncoder.encode(member.getUserPw());
+        member.setUserPw(encodedPassword);
         memberRepository.save(member);
         return member.getId();
     }
@@ -34,10 +37,15 @@ public class MemberService {
 
         List<Member> member = memberRepository.findByUserId(login.getUserId());
 
+        // 아이디 없을 때
         if(member.isEmpty()){
             throw new IllegalArgumentException("아이디가 존재하지 않습니다.");
         }
 
+        // 비밀번호 일치하지 않을 때
+        if(!passwordEncoder.matches(login.getUserPw(), member.get(0).getUserPw())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 
 

@@ -7,6 +7,8 @@ import com.now.awesome.api.response.JoinResult;
 import com.now.awesome.api.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,10 +20,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
     /**
      * 회원가입 요청
      */
-    @PostMapping("/join")
+    @PostMapping("/api/join")
     /*파라미터 받기*/
     public JoinResult saveMember(@RequestBody @Valid Member member) {
         log.info("회원가입 컨트롤러");
@@ -32,8 +35,9 @@ public class MemberController {
         return new JoinResult(id);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public void loginMember(@RequestBody Login login) {
+        log.info(login.toString());
         memberService.login(login);
     }
 
