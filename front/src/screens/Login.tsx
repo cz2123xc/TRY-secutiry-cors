@@ -42,20 +42,20 @@ const SubmitButton = styled.button`
 function Login() {
 
     const [userId, setUserId] = useState("");
-    const [userPw, setUserPw] = useState("");
+    const [password, setPassword] = useState("");
 
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
 
-        if(userId === "" || userPw === "") {
+        if(userId === "" || password === "") {
             alert("아이디와 비밀번호를 입력해주세요.");
             return;
         }
 
         axios.post("http://localhost:8080/api/login", {
             userId: userId,
-            userPw: userPw
+            password: password
         }).then(res => {
             alert("로그인 되었습니다.");
             window.location.href = "/";
@@ -80,7 +80,7 @@ function Login() {
                     </tr>
                     <tr>
                         <TitleTD>비밀번호</TitleTD>
-                        <InputBox type="password" value={userPw} onChange={(e) => setUserPw(e.target.value)}/>
+                        <InputBox type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                     </tr>
                     </tbody>
                 </table>

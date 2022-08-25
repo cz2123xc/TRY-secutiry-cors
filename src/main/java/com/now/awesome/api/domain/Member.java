@@ -1,5 +1,6 @@
 package com.now.awesome.api.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +19,7 @@ public class Member {
     private String userId;
 
     @NotEmpty(message = "비밀번호를 입력하세요.")
-    private String userPw;
+    private String password;
 
     @NotEmpty(message = "이름을 입력하세요.")
     private String name;
@@ -28,5 +29,15 @@ public class Member {
 
     private String regDate;
 
+    @Builder
+    Member(String userId, String password, String name, String email) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+    }
 
+    public Member() {
+
+    }
 }

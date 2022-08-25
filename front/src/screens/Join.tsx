@@ -46,8 +46,8 @@ const SubmitButton = styled.button`
 function Join () {
 
     const [userId, setUserId] = useState("");
-    const [userPw, setUserPw] = useState("");
-    const [userPwCheck, setUserPwCheck] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordCheck, setPasswordCheck] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
 
@@ -63,12 +63,12 @@ function Join () {
         setUserId(e.target.value);
     }
 
-    const onUserPwHandler = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setUserPw(e.target.value);
+    const onPwHandler = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setPassword(e.target.value);
     }
 
-    const onUserPwCheckHandler = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setUserPwCheck(e.target.value);
+    const onPwCheckHandler = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setPasswordCheck(e.target.value);
     }
 
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -82,13 +82,13 @@ function Join () {
         }
 
         // pw null check
-        if(userPw === "") {
+        if(password === "") {
             alert("비밀번호를 입력해주세요.");
             return;
         }
 
         // pw check null check
-        if (userPw !== userPwCheck) {
+        if (password !== passwordCheck) {
             alert("비밀번호가 일치하지 않습니다.");
             return;
         }
@@ -103,7 +103,7 @@ function Join () {
         // use axios
         axios.post("http://localhost:8080/api/join", {
             userId,
-            userPw,
+            password,
             name,
             email
         }).then(res => {
@@ -134,11 +134,11 @@ function Join () {
                     </tr>
                     <tr>
                         <TitleTD>비밀번호</TitleTD>
-                        <td><InputBox value={userPw} id={'userPw'} onChange={onUserPwHandler} type="password"/></td>
+                        <td><InputBox value={password} id={'password'} onChange={onPwHandler} type="password"/></td>
                     </tr>
                     <tr>
                         <TitleTD>비밀번호 확인</TitleTD>
-                        <td><InputBox value={userPwCheck} id={'userPwCheck'} onChange={onUserPwCheckHandler} type="password"/></td>
+                        <td><InputBox value={passwordCheck} id={'passwordCheck'} onChange={onPwCheckHandler} type="password"/></td>
                     </tr>
                     <tr>
                         <TitleTD>이름</TitleTD>

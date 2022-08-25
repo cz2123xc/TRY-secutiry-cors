@@ -27,8 +27,8 @@ public class MemberService {
         validationDuplicateMember(member);
 
         // 패스워드 암호화
-        String encodedPassword = passwordEncoder.encode(member.getUserPw());
-        member.setUserPw(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
         memberRepository.save(member);
         return member.getId();
     }
@@ -43,9 +43,14 @@ public class MemberService {
         }
 
         // 비밀번호 일치하지 않을 때
-        if(!passwordEncoder.matches(login.getUserPw(), member.get(0).getUserPw())){
+        if(!passwordEncoder.matches(login.getPassword(), member.get(0).getPassword())){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+    }
+
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
     }
 
 

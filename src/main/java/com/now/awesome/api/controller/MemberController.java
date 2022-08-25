@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     @PostMapping("/api/login")
-    public void loginMember(@RequestBody Login login) {
+    public void loginMember(@RequestBody @Valid Login login) {
         log.info(login.toString());
         memberService.login(login);
     }
