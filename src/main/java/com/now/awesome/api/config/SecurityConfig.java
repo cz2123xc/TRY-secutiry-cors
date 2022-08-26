@@ -3,6 +3,7 @@ package com.now.awesome.api.config;
 
 import com.now.awesome.api.jwt.JwtFilter;
 import com.now.awesome.api.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,12 +22,15 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() { // 암호화 설정
         return new BCryptPasswordEncoder();
     }
+
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Bean
@@ -39,7 +43,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin().disable() // 폼 로그인 설정 제거
                 .httpBasic().disable() // http basic 방지
-//                .addFilter() // jwt 토큰 필터 추가
+                .addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class) // jwt 필터 추가
                 .authorizeRequests()
                 .antMatchers("/api/logout").authenticated() // 로그 아웃은 로그인 상태에서만 가능 하도록
                 .antMatchers("/api/admin/**").hasRole("ADMIN") // 어드민 요청은 관리자 인증 상태에서만 가능 하도록

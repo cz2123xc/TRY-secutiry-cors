@@ -2,13 +2,18 @@ package com.now.awesome.api.controller;
 
 import com.now.awesome.api.domain.Member;
 import com.now.awesome.api.exception.ServerError;
+import com.now.awesome.api.jwt.JwtTokenProvider;
 import com.now.awesome.api.request.Login;
 import com.now.awesome.api.response.JoinResult;
+import com.now.awesome.api.response.TokenDataResponse;
 import com.now.awesome.api.service.MemberService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +24,9 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
 
     /**
@@ -36,13 +44,28 @@ public class MemberController {
     }
 
     @PostMapping("/api/login")
-    public void loginMember(@RequestBody @Valid Login login) {
+    public TokenDataResponse loginMember(@RequestBody @Valid Login login) {
+
         log.info(login.toString());
-        memberService.login(login);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(login.getUserId(), login.getPassword())
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtTokenProvider.createToken(authentication);
+
+        Claims claims = jwtTokenProvider.validateToken(jwt);
+
+        return TokenDataResponse.builder()
+                .code("200")
+                .message("success")
+                .token(jwt)
+                .subject(claims.getSubject())
+                .issuedTime(claims.getIssuedAt().toString())
+                .expiredTime(claims.getExpiration().toString())
+                .build();
     }
-
-
-
-
 
 }
