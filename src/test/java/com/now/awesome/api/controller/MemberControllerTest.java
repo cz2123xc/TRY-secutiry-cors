@@ -50,18 +50,18 @@ class MemberControllerTest {
 
         // 1. 회원가입
         Member member = Member.builder()
-                .userId("123")
-                .password("123")
-                .name("123")
-                .email("123")
+                .userId("234")
+                .password("234")
+                .name("234")
+                .email("234")
                 .build();
         
         memberService.join(member);
 
         // 2. 로그인 테스트
         Login login = Login.builder()
-                .userId("123")
-                .password("123")
+                .userId("234")
+                .password("234")
                 .build();
 
         String json = objectMapper.writeValueAsString(login);

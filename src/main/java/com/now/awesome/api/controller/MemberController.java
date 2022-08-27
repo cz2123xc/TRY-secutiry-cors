@@ -27,8 +27,6 @@ public class MemberController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-
-
     /**
      * 회원가입 요청
      */
@@ -56,7 +54,7 @@ public class MemberController {
 
         String jwt = jwtTokenProvider.createToken(authentication);
 
-        Claims claims = jwtTokenProvider.validateToken(jwt);
+        Claims claims = jwtTokenProvider.makeClaims(jwt);
 
         return TokenDataResponse.builder()
                 .code("200")

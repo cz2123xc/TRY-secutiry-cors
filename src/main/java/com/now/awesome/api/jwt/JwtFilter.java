@@ -1,9 +1,9 @@
 package com.now.awesome.api.jwt;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,34 +15,42 @@ import java.io.IOException;
 
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
+
     private final JwtTokenProvider jwtTokenProvider;
+
+    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String jwt = getJwtFromRequest(request); // get jwt from header
+        String requestURI = request.getRequestURI(); // get request uri
+
         try {
-            String jwt = jwtTokenProvider.getJwtFromRequest(request); // get jwt from header
-            if (jwt != null && jwtTokenProvider.validateToken(jwt)) { // jwt 유효성 확인
-
-                String userId = JwtTokenProvider.getUserIdFromToken(jwt);
-                UserAuthentication authentication = new UserAuthentication(userId, null);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); // 사용자 정보 세팅
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            if(StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) { // if jwt is valid
+                Authentication authentication = jwtTokenProvider.getAuthentication(jwt); // get authentication from jwt
+                SecurityContextHolder.getContext().setAuthentication(authentication); // set authentication to security context
+                log.info("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestURI);
             } else {
-                throw new ServletException("JWT Token is not valid");
+                log.info("no valid JWT token found, uri: {}", requestURI);
             }
-
-            filterChain.doFilter(request, response); // 다음 필터로 전달
-
+            filterChain.doFilter(request, response); // do filter
         } catch (Exception e) {
             logger.error("Can NOT get JWT from Header", e);
         }
     }
 
 
+    public String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring("Bearer ".length()); // 토큰 앞 부분 (Bearer) 제거
+        }
+        return null;
+    }
 
 
 }
