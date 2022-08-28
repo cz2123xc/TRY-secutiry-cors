@@ -5,10 +5,15 @@ import lombok.Getter;
 @Getter
 public class ServerError extends DefaultException{
 
-        private static final String message = "서버 에러입니다.";
+        private static final String MESSAGE = "서버 에러입니다.";
 
         public ServerError() {
-            super(message);
+            super(MESSAGE);
+        }
+
+        public ServerError(String fieldName, String message) {
+            super(MESSAGE);
+            addValidation(fieldName, message);
         }
 
         @Override

@@ -1,6 +1,7 @@
 package com.now.awesome.api.controller;
 
 import com.now.awesome.api.domain.Member;
+import com.now.awesome.api.exception.InvalidRequest;
 import com.now.awesome.api.exception.ServerError;
 import com.now.awesome.api.jwt.JwtTokenProvider;
 import com.now.awesome.api.request.Login;
@@ -33,7 +34,6 @@ public class MemberController {
     @PostMapping("/api/join")
     /*파라미터 받기*/
     public JoinResult saveMember(@RequestBody @Valid Member member) {
-        log.info("회원가입 컨트롤러");
         Long id = memberService.join(member);
         if(id == null){
             throw new ServerError();
@@ -44,26 +44,37 @@ public class MemberController {
     @PostMapping("/api/login")
     public TokenDataResponse loginMember(@RequestBody @Valid Login login) {
 
-        log.info(login.toString());
+        // 1. 로그인 검증
+        Member member = memberService.login(login);
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(login.getUserId(), login.getPassword())
-        );
+        if(member == null) {
+            throw new InvalidRequest("userId", "아이디가 존재하지 않습니다.");
+        }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            Authentication authentication = authenticationManager.authenticate( // step 1 UsernamePasswordAuthenticationToken -> authenticate
+                    new UsernamePasswordAuthenticationToken(login.getUserId(), login.getPassword()) // principal, credentials
+            );
 
-        String jwt = jwtTokenProvider.createToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication); // step 2 getContext -> SecurityContextHolder
 
-        Claims claims = jwtTokenProvider.makeClaims(jwt);
+            String jwt = jwtTokenProvider.createToken(authentication);
 
-        return TokenDataResponse.builder()
-                .code("200")
-                .message("success")
-                .token(jwt)
-                .subject(claims.getSubject())
-                .issuedTime(claims.getIssuedAt().toString())
-                .expiredTime(claims.getExpiration().toString())
-                .build();
+            Claims claims = jwtTokenProvider.makeClaims(jwt);
+
+            return TokenDataResponse.builder()
+                    .code("200")
+                    .message("success")
+                    .token(jwt)
+                    .subject(claims.getSubject())
+                    .issuedTime(claims.getIssuedAt().toString())
+                    .expiredTime(claims.getExpiration().toString())
+                    .build();
+
+        } catch (Exception e) {
+            throw new ServerError("Token", "토큰 발급 실패");
+        }
     }
+
 
 }

@@ -57,10 +57,14 @@ function Login() {
             userId: userId,
             password: password
         }).then(res => {
-            alert("로그인 되었습니다.");
+            alert("로그인 성공");
             window.location.href = "/";
         }).catch(err => {
-            alert(err.response.data.message);
+            if(err.response.data.validation){
+                for(const key in err.response.data.validation){
+                    alert(err.response.data.validation[key]);
+                }
+            }
         }).finally(() => {
             console.log("로그인 요청 완료");
         })

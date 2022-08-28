@@ -47,8 +47,8 @@ public class JwtTokenProvider {
 
 
         return Jwts.builder()
-                .setSubject((String)authentication.getPrincipal()) // 사용자
-                .claim(AUTHORITIES_KEY, authorities) // 권한
+                .setSubject((String)authentication.getPrincipal()) // 사용자 아이디
+                .claim(AUTHORITIES_KEY, authorities) // URL 별로 권한
                 .setIssuedAt(now) // 발행시간
                 .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME)) // 만료시간
                 .signWith(key, SignatureAlgorithm.HS256) // 암호화
